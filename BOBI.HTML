@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>O-M-S-E-E Premium 3D Store</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:"Roboto", sans-serif; background:#8c1c2b; color:#fffdfa; overflow-x:hidden; scroll-behavior:smooth; }
+header { background: rgba(140,28,43,0.95); padding:1rem 3rem; display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; z-index:2000; backdrop-filter:blur(10px); box-shadow:0 6px 25px rgba(0,0,0,0.5); border-bottom:1px solid rgba(255,255,255,0.05); transition: all 0.3s ease; }
+header.shrink { padding:0.5rem 3rem; box-shadow:0 10px 30px rgba(0,0,0,0.6); }
+.logo { display:flex; align-items:center; gap:0.8rem; cursor:pointer; }
+.logo img { width:50px; height:50px; border-radius:50%; box-shadow:0 4px 15px rgba(0,0,0,0.5);}
+.logo h1 { font-size:1.8rem; letter-spacing:2px;}
+nav { display:flex; gap:2rem; align-items:center; flex-wrap:wrap;}
+nav a { position: relative; padding:0.5rem; font-weight:500; transition:0.3s; }
+nav a::after { content:""; position:absolute; bottom:-4px; left:0; width:100%; height:2px; background:#fffdfa; transform:scaleX(0); transform-origin:right; transition:0.3s; }
+nav a:hover::after { transform:scaleX(1); transform-origin:left; }
+#searchCategories { display:flex; flex-wrap:wrap; justify-content:center; gap:1rem; margin:1rem 0; }
+#searchBox { padding:0.5rem 1rem; border-radius:8px; border:none; min-width:250px; font-size:1rem; }
+.categories div { background: rgba(255,255,255,0.1); padding:0.5rem 1rem; border-radius:12px; cursor:pointer; transition:0.2s; font-weight:500;}
+.categories div:hover { background: rgba(255,255,255,0.25); transform: translateY(-2px); }
+.hero { text-align:center; padding:7rem 2rem 5rem; background: linear-gradient(145deg, #8c1c2b, #a0203d);}
+.hero h2 { font-size:3.2rem; margin-bottom:1rem; text-shadow:0 6px 25px rgba(0,0,0,0.5);}
+.hero p { font-size:1.2rem; opacity:0.9;}
+.grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(250px, 1fr)); gap:2.5rem; padding:3rem 5%; max-width:1400px; margin:auto; }
+.card { background: linear-gradient(145deg, #a0203d, #8c1c2b); border-radius:22px; overflow:hidden; box-shadow:0 20px 60px rgba(0,0,0,0.65); cursor:pointer; display:flex; flex-direction:column; transition: transform 0.35s ease, box-shadow 0.35s ease; }
+.card:hover { box-shadow:0 30px 80px rgba(0,0,0,0.75);}
+.card img { width:100%; height:300px; object-fit:cover; }
+.card-content { padding:1.5rem; flex-grow:1; display:flex; flex-direction:column; justify-content:space-between; }
+.card-content h3 { margin-bottom:0.5rem; font-size:1.5rem; text-shadow:0 4px 15px rgba(0,0,0,0.5);}
+.card-content p { flex-grow:1; opacity:0.9; }
+.price { font-size:1.3rem; font-weight:700; margin:0.5rem 0;}
+.btn { display:inline-block; background:#fffdfa; color:#a0203d; padding:0.8rem 1.8rem; border-radius:35px; font-weight:600; transition: transform 0.25s ease, background 0.3s ease; box-shadow:0 5px 20px rgba(0,0,0,0.5); text-align:center; text-decoration:none;}
+.btn:hover { background:#f5f5f0; transform: scale(1.08); }
+#cartDrawer { position:fixed; top:0; right:-400px; width:350px; height:100%; background:#a0203d; color:#fffdfa; box-shadow:-2px 0 6px rgba(0,0,0,0.4); transition:0.3s; padding:20px; z-index:3000; overflow-y:auto; }
+#cartDrawer.open { right:0; }
+.cart-item { display:flex; gap:10px; border-bottom:1px solid rgba(255,255,255,0.2); padding:10px 0; align-items:center; }
+.cart-item img { width:60px; height:60px; object-fit:cover; border-radius:6px; }
+.cart-item div { flex-grow:1; }
+.cart-item button { background:#fffdfa; color:#a0203d; border:none; padding:4px 10px; border-radius:6px; cursor:pointer; margin-top:5px; font-size:0.9rem; }
+.cart-item button:hover { background:#f5f5f0; }
+#productModal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); justify-content:center; align-items:center; z-index:4000; }
+#productModalContent { background:#fffdfa; color:#a0203d; border-radius:20px; width:90%; max-width:600px; padding:20px; position:relative; }
+#productModalContent img { width:100%; max-height:300px; object-fit:cover; border-radius:12px; }
+#modalClose { position:absolute; top:10px; right:15px; font-size:1.5rem; cursor:pointer; }
+footer { background:#a0203d; text-align:center; padding:3rem 2rem; font-size:0.95rem; opacity:0.95; margin-top:4rem; }
+#contact { display:none; padding:4rem 2rem; background:#8c1c2b;}
+#contact input { padding:0.8rem; border-radius:10px; border:none; font-size:1rem;}
+#contact button { padding:1rem; border-radius:35px; border:none; font-weight:600; background:#fffdfa; color:#a0203d; font-size:1rem; cursor:pointer; transition:0.3s;}
+#contact button:hover { background:#f5f5f0; transform: scale(1.05); }
+@media(max-width:768px){ header{flex-direction:column; align-items:flex-start;} #searchCategories{flex-direction:column; align-items:center;} }
+</style>
+</head>
+<body>
+
+<header id="header">
+<div class="logo">
+<img src="https://cdn-icons-png.flaticon.com/512/857/857681.png" alt="O-M-S-E-E Logo" />
+<h1>O-M-S-E-E</h1>
+</div>
+<nav>
+<a href="#">Home</a>
+<a href="#featured">Shop</a>
+<a href="#collections">Collections</a>
+<a href="#about">About</a>
+<a href="#" id="contact-link">Contact</a>
+<button id="cartBtn" style="margin-left:1rem; background:#fffdfa;color:#a0203d;border:none;padding:0.5rem 1rem;border-radius:20px;cursor:pointer;">Cart (<span id="cartCount">0</span>)</button>
+</nav>
+</header>
+
+<section class="hero">
+<h2>WELCOME TO O-M-S-E-E</h2>
+<p>Luxury. Depth. Immersion — Experience 3D elegance like never before.</p>
+</section>
+
+<div id="searchCategories">
+<input type="text" id="searchBox" placeholder="Search for products..." />
+<div class="categories">
+<div onclick="filterCategory('All')">All</div>
+<div onclick="filterCategory('Mobiles')">Mobiles</div>
+<div onclick="filterCategory('Electronics')">Electronics</div>
+<div onclick="filterCategory('Fashion')">Fashion</div>
+<div onclick="filterCategory('Home')">Home</div>
+</div>
+</div>
+
+<section class="section" id="featured">
+<h2>Our Exclusive 3D Products</h2>
+<div class="grid" id="productGrid"></div>
+</section>
+
+<section class="section" id="about" style="background:#a0203d">
+<h2>About Us</h2>
+<p style="text-align:center; max-width:900px; margin:auto; opacity:0.9;">
+O-M-S-E-E brings you the most premium matte luxury experience through immersive 3D visualization. Every product reflects innovation, style, and the art of modern craftsmanship.
+</p>
+</section>
+
+<section class="section" id="contact">
+<h2 style="text-align:center; margin-bottom:2rem;">Contact Us</h2>
+<form style="max-width:600px; margin:auto; display:flex; flex-direction:column; gap:1rem;">
+<input type="text" name="name" placeholder="Your Name" required>
+<input type="tel" name="contact" placeholder="Contact Number" required>
+<input type="text" name="product" placeholder="Product" required>
+<button type="submit">Submit</button>
+</form>
+</section>
+
+<footer>© 2025 O-M-S-E-E Premium. All Rights Reserved.</footer>
+
+<!-- CART DRAWER -->
+<div id="cartDrawer">
+<h3>Your Cart</h3>
+<div id="cartItems"></div>
+<h4>Total: ₹<span id="cartTotal">0</span></h4>
+<button id="checkoutBtn" class="btn">Checkout</button>
+</div>
+
+<!-- PRODUCT MODAL -->
+<div id="productModal">
+<div id="productModalContent">
+<span id="modalClose">&times;</span>
+<img id="modalImage" src="" alt="">
+<h2 id="modalName"></h2>
+<p id="modalDesc"></p>
+<div id="modalPrice"></div>
+<button class="btn" id="modalAddCart">Add to Cart</button>
+</div>
+</div>
+
+<script>
+// HEADER SHRINK
+const header = document.getElementById("header");
+window.addEventListener("scroll", () => { if(window.scrollY>50) header.classList.add("shrink"); else header.classList.remove("shrink"); });
+
+// CONTACT TOGGLE
+const contactLink = document.getElementById("contact-link");
+const contactSection = document.getElementById("contact");
+contactLink.addEventListener("click", e=>{ e.preventDefault(); contactSection.style.display = (contactSection.style.display==="block"?"none":"block"); contactSection.scrollIntoView({behavior:"smooth"}); });
+
+// PRODUCTS ARRAY WITH 24 IMAGES
+const products = [
+  {id:1,name:"Samsung Galaxy S24 Ultra",price:120000,category:"Mobiles",description:"Latest Samsung flagship.",image:"https://www.celletronic.com/wp-content/uploads/2024/01/Samsung-Galaxy-S24-ULTRA-BLACK.jpg"},
+  {id:2,name:"iPhone 17 Pro",price:140000,category:"Mobiles",description:"Next-gen iPhone.",image:"https://cdn.shopify.com/s/files/1/0482/3957/5208/files/iphone_17pro_colors_confirmed_8a918cd8-40f7-43b9-9fe8-6f431f189780.jpg?v=1752744336"},
+  {id:3,name:"Samsung TV",price:80000,category:"Electronics",description:"Premium 4K TV.",image:"https://tse4.mm.bing.net/th/id/OIP.D27LsflOWU68MM7PD7SlSAHaE3?cb=12&rs=1&pid=ImgDetMain&o=7&rm=3"},
+  {id:4,name:"Samsung Speaker",price:15000,category:"Electronics",description:"High-quality speaker.",image:"https://www.digitaltrends.com/wp-content/uploads/2016/03/samsung02.jpg?p=1"},
+  {id:5,name:"Men Shoes",price:4999,category:"Fashion",description:"Stylish men's shoes.",image:"https://i.pinimg.com/originals/ef/3c/f8/ef3cf8ce51742b3cc3b0c2348fbb2597.jpg"},
+  {id:6,name:"Sports Shoes",price:6999,category:"Fashion",description:"High-performance sports shoes.",image:"https://tse2.mm.bing.net/th/id/OIP.h7tuHACDXE-V6CZGdzaYHQHaKL?cb=12&rs=1&pid=ImgDetMain&o=7&rm=3"},
+  {id:7,name:"Michael Jordan Jersey",price:8999,category:"Fashion",description:"Iconic jersey.",image:"https://a1.espncdn.com/combiner/i?img=%2Fphoto%2F2014%2F0417%2Fnba_jordans1_1296x729.jpg"},
+  {id:8,name:"Red Lipstick",price:1999,category:"Fashion",description:"Limited edition.",image:"https://pyxis.nymag.com/v1/imgs/f26/20b/ebcbb0707e9ceabb5e0fe76fc32f02bef8-lipstick-lede.rsquare.w700.jpg"},
+  {id:9,name:"Perfume",price:4999,category:"Fashion",description:"Luxury fragrance.",image:"https://tse1.mm.bing.net/th/id/OIP.qGWHw6lS2vlEZyck2sCK3gHaF7?cb=12&rs=1&pid=ImgDetMain&o=7&rm=3"},
+  {id:10,name:"Book Stack",price:899,category:"Home",description:"Elegant stack of books.",image:"https://images.pexels.com/photos/1148399/pexels-photo-1148399.jpeg?cs=srgb&dl=background-book-stack-books-1148399.jpg&fm=jpg"},
+  {id:11,name:"Smart Watch",price:9999,category:"Electronics",description:"Elegant matte crimson design.",image:"https://media.istockphoto.com/photos/smart-watch-displaying-apps-icons-picture-id539215939?k=20&m=539215939&s=612x612&w=0&h=44mSvoDprwQLtdbW4QLkJAvtCesu4K-nu3j9sblZeFo="},
+  {id:12,name:"Men Shoes Premium",price:4499,category:"Fashion",description:"Stylish men's shoes.",image:"https://img.freepik.com/premium-photo/mens-shoes-shoe-store_255667-68048.jpg"},
+  {id:13,name:"Lipstick Premium",price:6999,category:"Fashion",description:"Limited edition designer shoes.",image:"https://media.neimanmarcus.com/f_auto,q_auto:low,ar_4:5,c_fill,dpr_2.0,w_1200/01/nm_3012222_100066_m"},
+  {id:14,name:"Iphone Premium",price:9499,category:"Electronics",description:"Latest smartphone.",image:"https://m.media-amazon.com/images/I/71CSc3M2AGL.jpg"},
+  {id:15,name:"Designer Bag",price:2499,category:"Fashion",description:"Premium bag for everyday elegance.",image:"https://www.pngarts.com/files/1/School-Bag-PNG-Picture.png"},
+  {id:16,name:"Laptop",price:799,category:"Electronics",description:"Elegant accessories.",image:"https://tse2.mm.bing.net/th/id/OIP.30y29wUXqS17aMfWTdQ7rQHaE8?cb=12&rs=1&pid=ImgDetMain&o=7&rm=3"},
+  {id:17,name:"Coat Pant",price:1499,category:"Fashion",description:"Exclusive premium item.",image:"https://i.etsystatic.com/26526080/r/il/626d7f/4434966184/il_1080xN.4434966184_hpl6.jpg"},
+  {id:18,name:"Umbrella",price:5499,category:"Home",description:"Latest gadget with design.",image:"https://tse1.mm.bing.net/th/id/OIP.3dO6ZOyxliI2I5L0c3QeEQHaHa?cb=12&rs=1&pid=ImgDetMain&o=7&rm=3"},
+  {id:19,name:"Gadget 2",price:4999,category:"Electronics",description:"Modern gadget for everyday use.",image:"https://i5.walmartimages.com/asr/11cd9543-6528-4488-93b0-74197554ef10.8eac557db4d989fecedab76caa63d59a.jpeg"},
+  {id:20,name:"Airbuds Pro",price:3999,category:"Electronics",description:"High-quality wireless earbuds.",image:"https://assets-prd.ignimgs.com/2022/09/08/airbuds-pro-2022-btton-1662619736290.jpg"},
+  {id:21,name:"Fan",price:5499,category:"Home",description:"Latest tech gadget.",image:"https://tse1.mm.bing.net/th/id/OIP.RIm1LVW1bTz71m56TrgRBwHaDV?cb=12&rs=1&pid=ImgDetMain&o=7&rm=3"},
+  {id:22,name:"Extra Product 1",price:9999,category:"Electronics",description:"Additional product.",image:"https://tse2.mm.bing.net/th/id/OIP.mAJ7J9QJXSx1a4VPJx3JGQHaHa?cb=12&rs=1&pid=ImgDetMain&o=7&rm=3"},
+  {id:23,name:"Extra Product 2",price:10999,category:"Electronics",description:"Additional product.",image:"https://m.media-amazon.com/images/I/61wtl1kc7sL._SX522_.jpg"},
+  {id:24,name:"Extra Product 3",price:12999,category:"Electronics",description:"Additional product.",image:"https://tse3.mm.bing.net/th/id/OIP.EKe1gyXNuLvWF4YKMjsrawHaHa?cb=12&rs=1&pid=ImgDetMain&o=7&rm=3"}
+];
+
+// CART LOGIC
+let cart = {};
+let selectedCategory = 'All';
+
+function renderProducts(){
+  const grid = document.getElementById('productGrid');
+  const query = document.getElementById('searchBox').value.toLowerCase();
+  let filtered = products.filter(p=> (selectedCategory==='All'||p.category===selectedCategory));
+  if(query) filtered = filtered.filter(p=>p.name.toLowerCase().includes(query));
+  grid.innerHTML='';
+  filtered.forEach(p=>{
+    const card = document.createElement('div'); card.className='card';
+    card.innerHTML=`<img src="${p.image}" alt="${p.name}">
+      <div class="card-content">
+        <h3>${p.name}</h3>
+        <p>${p.description}</p>
+        <div class="price">₹${p.price}</div>
+        <a href="#" class="btn">Add to Cart</a>
+      </div>`;
+    grid.appendChild(card);
+    card.querySelector('img').onclick = () => openModal(p);
+    card.querySelector('.card-content').onclick = () => openModal(p);
+    card.querySelector('.btn').onclick = (e)=>{ e.stopPropagation(); addToCart(p.id); };
+  });
+}
+
+function filterCategory(cat){ selectedCategory=cat; renderProducts(); }
+function addToCart(id){ cart[id]=(cart[id]||0)+1; updateCart(); }
+function removeFromCart(id){ delete cart[id]; updateCart(); }
+
+function updateCart(){
+  const container=document.getElementById('cartItems');
+  const countEl=document.getElementById('cartCount');
+  const totalEl=document.getElementById('cartTotal');
+  container.innerHTML='';
+  let total=0, count=0;
+  for(const id in cart){
+    const p = products.find(x=>x.id==id);
+    const qty = cart[id];
+    total+=p.price*qty; count+=qty;
+    const item = document.createElement('div'); item.className='cart-item';
+    item.innerHTML=`<img src='${p.image}'/><div><strong>${p.name}</strong><br>₹${p.price} x ${qty}<br><button onclick='removeFromCart(${id})'>Remove</button></div>`;
+    container.appendChild(item);
+  }
+  countEl.textContent=count;
+  totalEl.textContent=total;
+}
+
+// CART DRAWER BUTTON
+const cartBtn = document.getElementById('cartBtn');
+const cartDrawer = document.getElementById('cartDrawer');
+cartBtn.addEventListener('click', ()=>{ cartDrawer.classList.toggle('open'); });
+document.getElementById('checkoutBtn').addEventListener('click', ()=>{
+  alert('Order placed successfully! (Demo)');
+  cart={};
+  updateCart();
+  cartDrawer.classList.remove('open');
+});
+
+// PRODUCT MODAL
+const modal = document.getElementById('productModal');
+const modalImage = document.getElementById('modalImage');
+const modalName = document.getElementById('modalName');
+const modalDesc = document.getElementById('modalDesc');
+const modalPrice = document.getElementById('modalPrice');
+const modalAddCart = document.getElementById('modalAddCart');
+const modalClose = document.getElementById('modalClose');
+
+function openModal(product){
+  modalImage.src = product.image;
+  modalName.textContent = product.name;
+  modalDesc.textContent = product.description;
+  modalPrice.textContent = "₹" + product.price;
+  modalAddCart.onclick = () => { addToCart(product.id); modal.style.display='none'; };
+  modal.style.display = 'flex';
+}
+modalClose.onclick = () => { modal.style.display='none'; };
+modal.onclick = (e) => { if(e.target===modal) modal.style.display='none'; };
+
+document.getElementById('searchBox').addEventListener('input', renderProducts);
+
+// INITIAL RENDER
+renderProducts();
+updateCart();
+</script>
+
+</body>
+</html>
